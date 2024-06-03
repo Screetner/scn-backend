@@ -7,10 +7,10 @@ from database.connection import Base
 class UserTable(Base):
     __tablename__ = 'users'
 
-    uid = Column(Integer, primary_key=True, index=True)
-    username = Column(String(255), index=True,)
-    roleId = Column(Integer, ForeignKey('roles.roleId'))
-    password = Column(String(255),)
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), index=True,)
+    roleId = Column(Integer, ForeignKey('roles.roleId'), nullable=True)
+    password = Column(String(100),)
 
     role = relationship("RoleTable", back_populates="users")
     assets = relationship("AssetTable", back_populates="user")

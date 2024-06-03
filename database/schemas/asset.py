@@ -12,7 +12,7 @@ class AssetTable(Base):
     assetId = Column(Integer, primary_key=True, index=True)
     latitude = Column(Double,)
     longitude = Column(Double,)
-    recordedUser = Column(Integer, ForeignKey('users.uid'))
+    recordedUser = Column(Integer, ForeignKey('users.id'))
     assetTypeId = Column(Integer, ForeignKey('assetTypes.assetTypeId'))
     imageFileName = Column(String(255),)
     recordedAt = Column(DateTime, default=datetime.datetime.now)
