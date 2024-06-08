@@ -26,10 +26,10 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Extract metadata from docker image
-      id : meta
+      id: meta
       uses: docker/metadata-action@v5
       with:
-          images: ${{ secrets.DOCKER_USERNAME }}/screetner-backend:latest
+        images: ${{ secrets.DOCKER_USERNAME }}/screetner-backend
 
     - name: Build and push
       uses: docker/build-push-action@v2
@@ -38,6 +38,7 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
+        # Ensure the tags are valid and follow Docker's tagging format
         tags: ${{ steps.meta.outputs.tags }}
-        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/screetner-backend:latest
-        cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/screetner-backend:latest,mode=max
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
