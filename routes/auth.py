@@ -33,7 +33,8 @@ async def auth(sign_in_body: SignInModel, db: AsyncSession = Depends(get_session
         payload = {"username": user.username, "roleId": user.roleId}
         secret = os.getenv("JWT_SECRET")
         token = jwt.encode(header, payload, secret).decode("utf-8")
-        return {"message": "Sign in successful", "token": token}
+        return {"message": "Sign in successful", "token": token,
+                "user": {"username": user.username, "roleId": user.roleId}}
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(status_code=400, detail=str(e))
