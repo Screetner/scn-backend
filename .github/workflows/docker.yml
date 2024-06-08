@@ -2,8 +2,8 @@ name: Build and Push Docker Image
 
 on:
   push:
-      branches:
-        - ci-cd
+    branches:
+      - ci-cd
 
 jobs:
   build:
@@ -33,3 +33,5 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/screetner-backend:latest
+        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/screetner-backend:latest
+        cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/screetner-backend:latest,mode=max

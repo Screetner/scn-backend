@@ -1,12 +1,23 @@
 # Build stage
+FROM python:3.9-slim as build
+
+WORKDIR /app
+
+# Cache Python packages
+COPY requirements.txt .
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# Production stage
 FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy Python packages from the build stage
+COPY --from=build /install /usr/local
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-
+# Copy the application code
 COPY . .
 
 EXPOSE 8080
