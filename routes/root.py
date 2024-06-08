@@ -11,11 +11,4 @@ router = APIRouter()
 
 @router.get("/")
 async def root():
-    return {"message": "Hello World! AUjung"}
-
-
-@router.get("/test")
-async def testQuery(db: AsyncSession = Depends(get_session)):
-    results = await db.execute(select(TestTable))
-    users = results.scalars().all()
-    return {"user": users}
+    return {"message": "Hello World! This is the Screetner project that made by FastAPI."}
