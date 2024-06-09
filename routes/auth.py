@@ -39,7 +39,6 @@ async def auth(sign_in_body: SignInModel, response : Response, db: AsyncSession 
             value=token,
             httponly=True,
             samesite="strict",
-            secure=True,
             max_age=3600
         )
 
