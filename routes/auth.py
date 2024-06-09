@@ -2,7 +2,7 @@ import os
 
 import bcrypt
 from authlib.jose import jwt
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from fastapi.params import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.post("/signIn")
-async def auth(sign_in_body: SignInModel, db: AsyncSession = Depends(get_session)):
+async def auth(sign_in_body: SignInModel, response : Response, db: AsyncSession = Depends(get_session)):
     try:
         query = select(UserTable).filter((sign_in_body.username == UserTable.username))
         result = await db.execute(query)
@@ -33,6 +33,16 @@ async def auth(sign_in_body: SignInModel, db: AsyncSession = Depends(get_session
         payload = {"username": user.username, "roleId": user.roleId}
         secret = os.getenv("JWT_SECRET")
         token = jwt.encode(header, payload, secret).decode("utf-8")
+
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            samesite="strict",
+            secure=True,
+            max_age=3600
+        )
+
         return {"message": "Sign in successful", "token": token,
                 "user": {"username": user.username, "roleId": user.roleId}}
     except Exception as e:
