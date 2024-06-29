@@ -1,10 +1,4 @@
 from fastapi import APIRouter
-from fastapi.params import Depends
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from database.connection import get_session
-from database.schemas import TestTable
 
 router = APIRouter()
 

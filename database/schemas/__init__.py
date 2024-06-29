@@ -1,15 +1,15 @@
 from .asset import AssetTable
 from .assetType import AssetTypeTable
-from .test import TestTable
 from .role import RoleTable
-from .config import ConfigTable
 from .user import UserTable
+from .organization import OrganizationTable
+from .videoSession import VideoSessionTable
 
 __all__ = [
-    'TestTable',
     'RoleTable',
-    'ConfigTable',
     'UserTable',
     'AssetTable',
     'AssetTypeTable',
+    'OrganizationTable',
+    'VideoSessionTable',
 ]
