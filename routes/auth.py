@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.post("/signIn")
-async def auth(sign_in_body: SignInModel, response : Response, db: AsyncSession = Depends(get_session)):
+async def auth(sign_in_body: SignInModel, response: Response, db: AsyncSession = Depends(get_session)):
     try:
         query = select(UserTable).filter((sign_in_body.username == UserTable.username))
         result = await db.execute(query)

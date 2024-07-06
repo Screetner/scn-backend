@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Null
 from sqlalchemy.orm import relationship
 from geoalchemy2 import Geometry
 
@@ -11,8 +11,8 @@ class OrganizationTable(Base):
     __tablename__ = 'organizations'
 
     OrganizationId = Column(Integer, primary_key=True, index=True)
-    Name = Column(String(255), index=True)
-    Border = Column(Geometry('POLYGON'))
+    Name = Column(String(255), index=True, nullable=False)
+    Border = Column(Geometry('POLYGON', srid=4326), nullable=True, default=Null)
     createdAt = Column(DateTime, default=datetime.datetime.now)
     updatedAt = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
