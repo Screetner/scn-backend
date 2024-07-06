@@ -29,23 +29,29 @@ async def insert_organization(db: AsyncSession = Depends(get_session)):
     mock_at_data = generate_mock_asserType()
     new_at = AssetTypeTable(**mock_at_data)
 
-    async with db as session:
-        session.add(new_org)
-        await session.commit()
-        await session.refresh(new_org)
+    try:
+        async with db as session:
+            async with session.begin():
+                session.add(new_org)
+                await session.flush()
 
-        mock_role_data = generate_mock_role(new_org.OrganizationId)
-        new_role = RoleTable(**mock_role_data)
-        session.add(new_role)
-        await session.commit()
-        await session.refresh(new_role)
+                mock_role_data = generate_mock_role(new_org.OrganizationId)
+                new_role = RoleTable(**mock_role_data)
+                session.add(new_role)
+                await session.flush()
 
-        mock_user_data = generate_mock_user(new_role.roleId)
-        new_user = UserTable(**mock_user_data)
-        session.add(new_user)
-        await session.commit()
-        await session.refresh(new_user)
+                mock_user_data = generate_mock_user(new_role.roleId)
+                new_user = UserTable(**mock_user_data)
+                session.add(new_user)
 
-        session.add(new_at)
-        await session.commit()
-        await session.refresh(new_at)
+                session.add(new_at)
+
+            await session.refresh(new_org)
+            await session.refresh(new_role)
+            await session.refresh(new_user)
+            await session.refresh(new_at)
+
+    except Exception as e:
+        return {"message": f"Error occurred: {str(e)}"}
+
+    return {"message": "Organization and related data inserted successfully"}
