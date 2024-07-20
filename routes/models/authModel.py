@@ -10,3 +10,9 @@ class SignUpModel(BaseModel):
     username: str
     password: str
     roleId: int
+
+
+class JwtPayload(BaseModel):
+    userId: int
+    roleId: int
+    organizationId: int

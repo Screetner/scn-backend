@@ -6,12 +6,14 @@ from fastapi import APIRouter, HTTPException, Response
 from fastapi.params import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+from fastapi.responses import JSONResponse
 
 from database.connection import get_session
-from database.schemas import UserTable
+from database.schemas import UserTable, OrganizationTable, RoleTable
 # logging
 from logger import logger
-from routes.models.authModel import SignInModel, SignUpModel
+from routes.models.authModel import SignInModel, SignUpModel, JwtPayload
 
 router = APIRouter(
     prefix="/auth",
@@ -29,21 +31,35 @@ async def auth(sign_in_body: SignInModel, response: Response, db: AsyncSession =
         if not user or not bcrypt.checkpw(sign_in_body.password.encode('utf-8'), user.password.encode('utf-8')):
             raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-        header = {"alg": "HS256"}
-        payload = {"username": user.username, "roleId": user.roleId}
-        secret = os.getenv("JWT_SECRET")
-        token = jwt.encode(header, payload, secret).decode("utf-8")
-
-        response.set_cookie(
-            key="access_token",
-            value=token,
-            httponly=True,
-            samesite="strict",
-            max_age=3600
+        query = (
+            select(RoleTable)
+            .join(UserTable, RoleTable.roleId == UserTable.roleId)
+            .join(OrganizationTable, (RoleTable.OrganizationId == OrganizationTable.OrganizationId))
+            .options(
+                joinedload(RoleTable.organization),
+                joinedload(RoleTable.users)
+            )
+            .where((sign_in_body.username == UserTable.username))
         )
 
-        return {"message": "Sign in successful", "token": token,
-                "user": {"username": user.username, "roleId": user.roleId}}
+        result = (await db.execute(query)).scalars().first()
+
+        header = {"alg": "HS256"}
+        payload = JwtPayload(userId=user.UserId, roleId=user.roleId, organizationId=result.OrganizationId)
+        print(payload.model_dump())
+        secret = os.getenv("JWT_ACCESS_SECRET")
+        token = jwt.encode(header, payload.model_dump(), secret).decode("utf-8")
+        response = {
+            "token": token,
+            "user": {
+                "username": user.username,
+                "roleId": user.roleId,
+                "roleName": result.roleName,
+                "email": user.email,
+                "organization_name": result.organization.Name,
+            }
+        }
+        return JSONResponse(content=response, status_code=200)
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(status_code=400, detail=str(e))
