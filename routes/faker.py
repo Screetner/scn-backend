@@ -8,7 +8,7 @@ from database.mockData.faker import *
 from database.schemas import OrganizationTable, RoleTable, UserTable, AssetTypeTable
 
 router = APIRouter(
-    prefix="/auth",
+    prefix="/faker",
     tags=["faker"]
 )
 

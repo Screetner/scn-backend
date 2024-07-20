@@ -31,3 +31,4 @@ app.add_middleware(
 app.include_router(root_router)
 app.include_router(auth_router)
 app.include_router(faker_router)
+app.include_router(geo_router)

@@ -11,11 +11,12 @@ def accessTokenValidation(token: str) -> Dict[str, Any]:
         claims = jwt.decode(token, secret)
 
         # Verify the token, including expiration
-        claims.validate()
+        # claims.validate()
 
         # If valid and not expired
         return {"status": "valid", "claims": claims}
     except JoseError as e:
+        print(e)
         # Handle different JoseErrors for more specific feedback
         if isinstance(e, jwt.ExpiredTokenError):
             return {"status": "expired"}

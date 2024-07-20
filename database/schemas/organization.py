@@ -12,7 +12,7 @@ class OrganizationTable(Base):
 
     OrganizationId = Column(Integer, primary_key=True, index=True)
     Name = Column(String(255), index=True, nullable=False)
-    Border = Column(Geometry('POLYGON', srid=4326), nullable=True, default=Null)
+    Border = Column(Geometry('POLYGON', srid=4326, spatial_index=None), nullable=True)
     createdAt = Column(DateTime, default=datetime.datetime.now)
     updatedAt = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 

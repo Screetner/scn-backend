@@ -20,7 +20,7 @@ def generate_valid_polygon():
 def generate_mock_organization():
     return {
         'Name': fake.company(),
-        'Border': WKTElement(generate_valid_polygon(), srid=4326),  # Ensure SRID is specified
+        # 'Border': WKTElement(generate_valid_polygon(), srid=4326),  # Ensure SRID is specified
     }
 
 
