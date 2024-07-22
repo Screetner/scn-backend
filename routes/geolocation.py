@@ -1,15 +1,11 @@
-import os
 from fastapi import APIRouter, Request
-from fastapi.params import Annotated, Depends, Header
+from fastapi.params import Depends
 from geoalchemy2 import WKTElement
 from sqlalchemy.ext.asyncio import AsyncSession
-from geoalchemy2.shape import from_shape
-from authlib.jose import jwt
 from database.connection import get_session
 from database.schemas import OrganizationTable
 from functions.geolocation.geo import format_polygon
 from routes.models.geoModel import PostGeoModel
-# from shapely.geometry import Polygon
 
 router = APIRouter(
     prefix="/geolocation",
@@ -17,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("/post")
 async def post_geo(geo_model: PostGeoModel, request: Request, db: AsyncSession = Depends(get_session)):
     token_payload = request.state.token_payload
     location = format_polygon(geo_model)
