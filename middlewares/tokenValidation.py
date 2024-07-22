@@ -6,19 +6,21 @@ from functions.auth.tokenValidation import accessTokenValidation
 
 class AccessTokenValidationMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next: RequestResponseEndpoint):
-        exclude_paths = ["/","/auth/signIn", "/auth/renewToken", "/docs", "/openapi.json", "/redoc", "/faker/insert"
-                                                                                                 "-organization"]
+        exclude_paths = [ "/auth/signIn", "/auth/renewToken", "/docs", "/openapi.json", "/redoc", "/faker/insert",
+                         "/organization"]
 
         if any(request.url.path.startswith(path) for path in exclude_paths):
             return await call_next(request)
 
         token = request.headers.get("Authorization")
+        print(token)
 
         if not token:
             return JSONResponse(content={"detail": "Token is required"}, status_code=403)
 
         try:
             user_access_token = token.split("Bearer ")[-1].strip()
+            print(user_access_token)
             token = accessTokenValidation(user_access_token)
             if token["status"] != "valid":
                 if token["status"] == "expired":
